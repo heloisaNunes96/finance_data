@@ -1,20 +1,23 @@
-import requests #Importa biblioteca HTTP
-import json
 from datetime import datetime
 
-url = "https://economia.awesomeapi.com.br/json/last/USD-BRL" #Define URL da API
-
-response = requests.get(url) #Faz a requisição GET: acessa a internet, chama a API e recebe a resposta
-
-data = response.json() #converte o json obtido em dicionário python
-
-timestamp = datetime.now().strftime("%Y%m%d_%H%M%S") #gera a parte dinâmica do nome do arquivo
-
-file_name = f"data/bronze/exchange_rates/usd_brl_{timestamp}.json"  
-
-#salva o arquivo no disco:
-with open(file_name, "w", encoding="utf-8") as file:
-    json.dump(data, file, indent=4)
+from api.exchange_rates import get_exchange_rate
+from utils.file_utils import save_json
 
 
-print(f"Arquivo salvo com sucesso: {file_name}")
+def main():
+
+    data = get_exchange_rate()
+
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+    file_path = (
+        f"data/bronze/exchange_rates/"
+        f"usd_brl_{timestamp}.json"
+    )
+
+    save_json(data, file_path)
+
+    print(f"Arquivo salvo com sucesso: {file_path}")
+
+if __name__ == "__main__":
+    main()
